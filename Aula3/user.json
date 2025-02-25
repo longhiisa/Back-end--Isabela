@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "nome": " Joao fulano",
+    "email": "joaofulano@gmail.com"
+  },
+  {
+    "id": 2,
+    "nome": " Isa Longhi",
+    "email": "isalonghi@gmail.com",
+    "senha": "isabela2804",
+    "endereco": "Armenio Pires Vieira ",
+    "CPF": "44257239883"
+  },
+  {
+    "id": 3,
+    "nome": " Isa Longhi",
+    "email": "isalonghi@gmail.com",
+    "senha": "isabela2804",
+    "endereco": "Armenio Pires Vieira ",
+    "CPF": "14998636779 "
+  }
+]
