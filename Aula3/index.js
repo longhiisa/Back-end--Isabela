@@ -1,38 +1,59 @@
-const express = require("express");  // Importando o express
-const userService = require("./userService");  // Importando o serviço de usuários
+const express = require('express');
+const userService = require('./userService');
 
-const app = express();  // Criando a instância do express
-app.use(express.json());  // Middleware para processar JSON no corpo da requisição
+const app = express();
+app.use(express.json()); // Ativa o JSON no Express
 
 // Rota para criar um novo usuário
 app.post("/users", (req, res) => {
-    const { nome, email, senha, endereco, telefone, CPF } = req.body;  // Recebendo dados do corpo da requisição
-
-    // Verifica se todos os campos necessários foram informados
-    if (!nome || !email || !senha || !endereco || !telefone || !CPF) {
-        return res.status(400).json({ error: "Nome, email, senha, endereço, telefone e CPF são obrigatórios" });
+    const { nome, email, senha, cpf, endereco, telefone } = req.body; // Recebe dados do corpo da requisição
+    if (!nome || !email || !senha || !endereco || !telefone || !cpf) { // Verifica se todos os campos obrigatórios foram preenchidos
+        return res.status(400).json({ error: "Nome, email, senha, CPF, endereço e telefone são obrigatórios" });
     }
-
-    // Chama o método addUser passando todos os parâmetros
-    const user = userService.addUser(nome, email, senha, endereco, telefone, CPF);
-
-    // Se ocorrer erro (exemplo: CPF já cadastrado), retorna o erro
-    if (user.error) {
-        return res.status(400).json({ error: user.error });
-    }
-
-    // Caso contrário, retorna o usuário criado
-    return res.status(201).json({ user });
+    const user = userService.addUser(nome, email, senha, cpf, endereco, telefone); // Adiciona o novo usuário
+    res.status(200).json({ user });
 });
 
-// Rota para obter todos os usuários
+// Rota para listar todos os usuários
 app.get("/users", (req, res) => {
-    const users = userService.getUsers();
-    return res.json(users);
+    res.json(userService.getUsers());
 });
 
-// Definindo a porta do servidor
-const port = 3001;
+// Rota para deletar um usuário pelo ID
+app.delete("/users/:id", (req, res) => {
+    const id = parseInt(req.params.id); // Converte o ID para número
+    try {
+        userService.deleteUser(id); // Deleta o usuário
+        res.status(200).json({ message: "Usuário deletado com sucesso" });
+    } catch (erro) {
+        res.status(400).json({ error: "Usuário não encontrado" });
+    }
+});
+
+// Rota para editar um usuário pelo ID (PUT)
+app.put("/users/:id", (req, res) => {
+    const id = parseInt(req.params.id); // Converte o ID para número
+    const { nome, email, senha, cpf, endereco, telefone } = req.body; // Desestrutura os dados do corpo da requisição
+
+    try {
+        // Chama o método para editar o usuário
+        const user = userService.editUser(id, nome, email, senha, cpf, endereco, telefone);
+
+        // Se o usuário não for encontrado
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado" });
+        }
+
+        // Se o usuário for encontrado e editado, retorna o usuário atualizado
+        return res.status(200).json(user);
+
+    } catch (erro) {
+        // Caso ocorra algum erro inesperado
+        return res.status(500).json({ error: "Erro ao editar usuário", details: erro.message });
+    }
+});
+
+const port = 3000;
 app.listen(port, () => {
-    console.log("Servidor rodando na porta", port);  // Mensagem indicando que o servidor está rodando
+    console.log("O servidor está rodando na porta: ", port);
 });
