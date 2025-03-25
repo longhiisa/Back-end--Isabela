@@ -5,12 +5,13 @@ const app = express();
 app.use(express.json()); // Ativa o JSON no Express
 
 // Rota para criar um novo usuário
-app.post("/users", (req, res) => {
-    const { nome, email, senha, cpf, endereco, telefone } = req.body; // Recebe dados do corpo da requisição
+app.post("/users", async (req, res) => {
+    const { nome, email, senha, cpf, endereco, telefone } = req.body;
+    console.log(nome, email, senha, cpf, endereco, telefone) // Recebe dados do corpo da requisição
     if (!nome || !email || !senha || !endereco || !telefone || !cpf) { // Verifica se todos os campos obrigatórios foram preenchidos
         return res.status(400).json({ error: "Nome, email, senha, CPF, endereço e telefone são obrigatórios" });
     }
-    const user = userService.addUser(nome, email, senha, cpf, endereco, telefone); // Adiciona o novo usuário
+    const user = await userService.addUser(nome, email, senha, cpf, endereco, telefone); // Adiciona o novo usuário
     res.status(200).json({ user });
 });
 
@@ -53,7 +54,7 @@ app.put("/users/:id", (req, res) => {
     }
 });
 
-const port = 3000;
+const port = 3001;
 app.listen(port, () => {
     console.log("O servidor está rodando na porta: ", port);
 });
