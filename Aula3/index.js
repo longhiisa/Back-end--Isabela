@@ -39,14 +39,16 @@ app.listen(port, () => {
 
 //excluir o usuário através do id
 
-app.delete("/users/:id", (req, res) => {
-    const id = parseInt(req.params.id); //converte o id para número
+app.delete("/users/:id", async (req, res) => {
     try {
-        id = Number(id);  //converte para um numero
-        const resultado = userService.deleteUser(id); //tenta excluir o usuário
-        res.status(200).json(resultado); //se der certo, retorna a mensagem
+        const id = parseInt(req.params.id); //converte o id para número
+        const resultado = await userService.deleteUser(id); //tenta excluir o usuário
+        if (resultado.length == 0) {
+            return res.status(406).json({"Mensagem": "Usuário não existe"});
+        }
+        return res.status(200).json(resultado); //se der certo, retorna a mensagem
     } catch {
-        res.status(404).json({ error: erro.message }); //caso de errado, retorna a mensagem de erro
+        return res.status(404).json({ error: erro.message }); //caso de errado, retorna a mensagem de erro
     }
 })
 
