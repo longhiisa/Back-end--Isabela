@@ -6,43 +6,7 @@ const bcrypt = require('bcryptjs');
 const mysql = require("./mysql");
 
 class UserService {
-    constructor() {
-        this.filePath = path.join(__dirname, 'user.json');
-        this.users = this.loadUser();
-        this.nextId = this.getNextId();
-    }
-
-    loadUser() {
-        try {
-            if (fs.existsSync(this.filePath)) {
-                const data = fs.readFileSync(this.filePath, 'utf8');
-                if (!data.trim()) return [];
-                return JSON.parse(data);
-            }
-        } catch (erro) {
-            console.log("Erro ao carregar o arquivo!", erro);
-        }
-        return [];
-    }
-
-    getNextId() {
-        try {
-            if (this.users.length === 0) return 1;
-            return Math.max(...this.users.map(user => user.id)) + 1;
-        } catch (erro) {
-            console.log("Erro na busca pelo ID", erro);
-            return 1;
-        }
-    }
-
-    saveUsers() {
-        try {
-            fs.writeFileSync(this.filePath, JSON.stringify(this.users, null, 2));
-        } catch (erro) {
-            console.log("Erro ao salvar o arquivo!", erro);
-        }
-    }
-
+  
     async addUser(nome, email, senha, endereço, cpf, telefone) {
         try {
             const senhaCripto = await bcrypt.hash(senha, 10);
